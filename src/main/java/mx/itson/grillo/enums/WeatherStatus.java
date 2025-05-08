@@ -4,6 +4,7 @@
  */
 package mx.itson.grillo.enums;
 
+import com.google.gson.annotations.SerializedName;
 import javax.management.relation.Relation;
 
 /**
@@ -12,7 +13,12 @@ import javax.management.relation.Relation;
  */
 public enum WeatherStatus {
     
+    @SerializedName("1")
     SUNNY,
+    @SerializedName("2")
     SNOW,
-    RAIN
+    @SerializedName("3")
+    RAIN,
+    @SerializedName("4")
+    UNKNOWN
 }
