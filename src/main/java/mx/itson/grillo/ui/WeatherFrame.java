@@ -9,7 +9,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import javax.swing.table.DefaultTableModel;
+import mx.itson.grillo.entities.Forecast;
 import mx.itson.grillo.entities.Weather;
 
 /**
@@ -36,6 +38,8 @@ public class WeatherFrame extends javax.swing.JFrame {
 
         btnFile = new javax.swing.JButton();
         lblCity = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblForecast = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -50,25 +54,41 @@ public class WeatherFrame extends javax.swing.JFrame {
         lblCity.setForeground(new java.awt.Color(51, 153, 255));
         lblCity.setText("...");
 
+        tblForecast.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Date", "Min Temp °C", "Max Temp °C", "Min Temp °F", "Max Temp °F"
+            }
+        ));
+        jScrollPane1.setViewportView(tblForecast);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnFile, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCity, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                    .addComponent(lblCity, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(36, 36, 36)
                 .addComponent(btnFile)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(lblCity)
-                .addContainerGap(258, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         pack();
@@ -95,6 +115,22 @@ public class WeatherFrame extends javax.swing.JFrame {
                     Weather w = Weather.deserialize(contenido);
                     
                     lblCity.setText(w.getCity());
+                    //lblTemperature.setText(w.getTemperature() + "C");
+                    
+                    DefaultTableModel model = (DefaultTableModel) tblForecast.getModel();
+                    model.setRowCount(0);
+                    
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+                    
+                    for (Forecast f: w.getForecast()) {
+                        model.addRow(new Object[]{
+                        dateFormat.format(f.getDay()),
+                        f.getMinTemperature() + "°C",
+                        f.getMaxTemperature() + "°C",
+                        Forecast.convertToFahrenheit(f.getMinTemperature()) + "°F",
+                        Forecast.convertToFahrenheit(f.getMaxTemperature()) + "°F"
+                        });
+                    }
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -138,6 +174,8 @@ public class WeatherFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFile;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCity;
+    private javax.swing.JTable tblForecast;
     // End of variables declaration//GEN-END:variables
 }
